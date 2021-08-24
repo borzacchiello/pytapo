@@ -16,11 +16,12 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 class Tapo:
-    def __init__(self, host, user, password, cloudPassword=""):
+    def __init__(self, host, user, password, cloudPassword="", https_port=443):
         self.host = host
         self.user = user
         self.password = password
         self.cloudPassword = cloudPassword
+        self.https_port = https_port
         self.stok = False
         self.userID = False
         self.headers = {
@@ -51,7 +52,8 @@ class Tapo:
             return False
 
     def getHostURL(self):
-        return "https://{host}/stok={stok}/ds".format(host=self.host, stok=self.stok)
+        return "https://{host}:{port}/stok={stok}/ds".format(
+            host=self.host, stok=self.stok, port=self.https_port)
 
     def getStreamURL(self):
         return "{host}:8800".format(host=self.host)
@@ -62,7 +64,7 @@ class Tapo:
         return True
 
     def refreshStok(self):
-        url = "https://{host}".format(host=self.host)
+        url = "https://{host}:{port}".format(host=self.host, port=self.https_port)
         data = {
             "method": "login",
             "params": {
